@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>Event-loop แบบพื้นฐานมากกกกก #1</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/normalize.css?v=f8f4687691" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/screen.css?v=f8f4687691" />
+
+    <meta name="description" content="อยู่ดีก็ผมก็อยากจะเขียนเรื่อง event loop ใน NodeJS ขึ้นมาแต่ต้องขอโทษด้วยครับเพราะเนื้อหามันเยอะมากก เลยต้องตัดแบ่งนะครับ" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="canonical" href="https://lagmanzaza.github.io//event-loop-1/" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <link rel="amphtml" href="https://lagmanzaza.github.io//event-loop-1/amp/" />
+    
+    <meta property="og:site_name" content="lagmanzaza" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Event-loop แบบพื้นฐานมากกกกก #1" />
+    <meta property="og:description" content="อยู่ดีก็ผมก็อยากจะเขียนเรื่อง event loop ใน NodeJS ขึ้นมาแต่ต้องขอโทษด้วยครับเพราะเนื้อหามันเยอะมากก เลยต้องตัดแบ่งนะครับ" />
+    <meta property="og:url" content="https://lagmanzaza.github.io//event-loop-1/" />
+    <meta property="og:image" content="https://lagmanzaza.github.io//content/images/2019/10/GSBai6R.png" />
+    <meta property="article:published_time" content="2019-10-20T08:04:37.000Z" />
+    <meta property="article:modified_time" content="2019-10-20T08:04:37.000Z" />
+    <meta property="article:tag" content="NodeJS" />
+    
+    <meta property="article:publisher" content="https://www.facebook.com/ghost" />
+    <meta property="article:author" content="https://www.facebook.com/lagman2600th" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Event-loop แบบพื้นฐานมากกกกก #1" />
+    <meta name="twitter:description" content="อยู่ดีก็ผมก็อยากจะเขียนเรื่อง event loop ใน NodeJS ขึ้นมาแต่ต้องขอโทษด้วยครับเพราะเนื้อหามันเยอะมากก เลยต้องตัดแบ่งนะครับ" />
+    <meta name="twitter:url" content="https://lagmanzaza.github.io//event-loop-1/" />
+    <meta name="twitter:image" content="https://lagmanzaza.github.io//content/images/2019/10/GSBai6R.png" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="tar jarupong" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="NodeJS" />
+    <meta name="twitter:site" content="@tryghost" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1188" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "lagmanzaza",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://lagmanzaza.github.io//favicon.ico",
+            "width": 48,
+            "height": 48
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "tar jarupong",
+        "image": {
+            "@type": "ImageObject",
+            "url": "https://lagmanzaza.github.io//content/images/2019/10/36398960_2017406161906508_6784979761291591680_o.jpg",
+            "width": 1440,
+            "height": 1432
+        },
+        "url": "https://lagmanzaza.github.io//author/tar/",
+        "sameAs": [
+            "https://www.facebook.com/lagman2600th"
+        ]
+    },
+    "headline": "Event-loop แบบพื้นฐานมากกกกก #1",
+    "url": "https://lagmanzaza.github.io//event-loop-1/",
+    "datePublished": "2019-10-20T08:04:37.000Z",
+    "dateModified": "2019-10-20T08:04:37.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://lagmanzaza.github.io//content/images/2019/10/GSBai6R.png",
+        "width": 2000,
+        "height": 1188
+    },
+    "keywords": "NodeJS",
+    "description": "สวัสดีครับผมกลับมาพบกับต้าคนเดิมคนดีอีกเช่นเคยนะครับ ซึ่งวันนี้ผมจะมาเล่าเรื่อง\nEvent-loop ใน NodeJS\nในภาษาและรูปภาพที่ทุกคนเข้าใจกันมาจะรอช้าอยู่ทำไมเข้าเรื่องกันเลย เดี๋ยวก่อนสิ\nถ้าสำหรับใครที่ยังไม่ได้อ่านเรื่อง execution stack แนะนำให้กลับไปอ่านก่อนนะครับ \nlink [https://krapokecode.github.io/BlogPost/exec-context-stack] \nจะได้เข้าใจมากขึ้น มาเข้าเรื่องกันเลยครับ\n\nEvent loop\nคือการทำงานใน NodeJS เป็นแบบ Single-thread แล้วตัว single thread คืออะไร\nมาเริ่มที่ single thread กันก่อนนะครับ เริ่ม~~",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://lagmanzaza.github.io//"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.2" />
+    <link rel="alternate" type="application/rss+xml" title="lagmanzaza" href="https://lagmanzaza.github.io//rss/" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-85390183-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-85390183-1');
+</script>
+</head>
+<body class="post-template tag-nodejs">
+
+    
+
+<main class="content" role="main">
+
+    <article class="post tag-nodejs">
+
+        <header class="post-header">
+            <a id="blog-logo" href="https://lagmanzaza.github.io/">
+                    lagmanzaza
+            </a>
+            <div class="inner">
+                <nav class="site-nav">
+    <div class="site-nav-left">
+    </div>
+</nav>
+            </div>
+        </header>
+
+
+        <span class="post-meta"><time datetime="2019-10-20">20 Oct 2019</time> on <a href="/tag/nodejs/">NodeJS</a></span>
+
+        <h1 class="post-title">Event-loop แบบพื้นฐานมากกกกก #1</h1>
+
+        <section class="post-content">
+            <p>สวัสดีครับผมกลับมาพบกับต้าคนเดิมคนดีอีกเช่นเคยนะครับ ซึ่งวันนี้ผมจะมาเล่าเรื่อง Event-loop ใน NodeJS ในภาษาและรูปภาพที่ทุกคนเข้าใจกันมาจะรอช้าอยู่ทำไมเข้าเรื่องกันเลย เดี๋ยวก่อนสิ ถ้าสำหรับใครที่ยังไม่ได้อ่านเรื่อง execution stack แนะนำให้กลับไปอ่านก่อนนะครับ <a href="https://krapokecode.github.io/BlogPost/exec-context-stack">link</a> จะได้เข้าใจมากขึ้น มาเข้าเรื่องกันเลยครับ</p><h4 id="event-loop">Event loop</h4><p>คือการทำงานใน NodeJS เป็นแบบ Single-thread แล้วตัว single thread คืออะไร มาเริ่มที่ single thread กันก่อนนะครับ เริ่ม~~~</p><figure class="kg-card kg-image-card"><img src="https://i.imgur.com/sxoUOEC.png" class="kg-image" alt="sxoUOEC.png"></figure><p>ตรงนี้ทุกคนคนจะเห็นว่าในหนึ่ง process มันมีอยู่หนึ่ง thread ครับแต่ในความเป็นจริงแล้ว process สามารถมีได้หลายๆ thread โดยแต่ละตัวจะกระจายกันทำงานคนละแบบหรือทำงานแบบเดียวกันก็ได้ ทั้งหมดนี้คือ process &amp; thread แบบพื้นฐานสุดๆ ได้เวลากลับมาเข้าเรื่องหลักกันครับ เรื่องของเรื่องก็คือ Event-loop มันทำงานอยู่แค่ thread เดียวครับ รูปภาพก็จะประมาณนี้ครับ</p><pre><code>
+// Event loop
+   ┌───────────────────────────┐
+┌─&gt;│           timers          │
+│  └─────────────┬─────────────┘
+│  ┌─────────────┴─────────────┐
+│  │     pending callbacks     │
+│  └─────────────┬─────────────┘
+│  ┌─────────────┴─────────────┐
+│  │       idle, prepare       │
+│  └─────────────┬─────────────┘      ┌───────────────┐
+│  ┌─────────────┴─────────────┐      │   incoming:   │
+│  │           poll            │&lt;─────┤  connections, │
+│  └─────────────┬─────────────┘      │   data, etc.  │
+│  ┌─────────────┴─────────────┐      └───────────────┘
+│  │           check           │
+│  └─────────────┬─────────────┘
+│  ┌─────────────┴─────────────┐
+└──┤      close callbacks      │
+   └───────────────────────────┘
+   
+   
+</code></pre><p>ผมต้องขอบอกก่อนว่าตัว NodeJS จะทำงานเป็นแบบคิววิ่งวนไปเรื่อยๆเพื่อเช็คว่ามีอะไรที่ต้องประมวลผลอีกรึเปล่า ประมาณนี้ครับ งั้นก็มาพูดถึงแต่ละตัวกันเลยครับ</p><p><strong>Timers</strong></p><p>เป็นสิ่งแรกในการทำงานของ event loop สำหรับจัดการเป็นส่วนสำหรับเรียกใช้งาน function ที่เป็น callback เช่น <em>setTimeout()</em> , <em>setInterval()</em> เป็นต้น</p><p><strong>Pending Callback</strong></p><p>สำหรับจัดการเมื่อ callback ทำงานเสร็จสิ้นหรือ error ครับ</p><p><strong>Poll</strong></p><p>ตัว poll เป็นตัวรอรับ request หรือ I/O event อันใหม่</p><p><strong>idle, prepare</strong></p><p>จะทำงานส่วนอยู่ใต้ลงไปอีก ผมขอพูดถึงบทบทความหน้าครับ ^^</p><p><strong>check</strong></p><p>ตรงจุดนี้ใช้สำหรับประมวลผล <em>setImmediate()</em> ได้ครับ</p><p><strong>Close callback</strong></p><p>ตามชื่อเลยครับ สำหรับปิด callback หรือ event ต่างๆ</p><p>ต้องขอตัดจบแบบละครไทยด้วยนะครับในบทความหน้าผมสัญญาว่าจะมาเล่าให้ละเอียดกว่านี้เพื่อให้ทุกคนเข้าใจมากขึ้นครับ</p><p>ปล. ที่จริงมีเรื่อง Event-multiplexer, mico task blah blah ที่ผมยังไม่ได้พูดอีก เศร้า</p>
+        </section>
+
+        <footer class="post-footer">
+
+                <section class="author">
+                    <h4>tar jarupong</h4>
+                    <p></p>
+                </section>
+
+            <section class="share">
+                <h4>Share this</h4>
+                <a class="icon-twitter" href="http://twitter.com/share?text=Event-loop แบบพื้นฐานมากกกกก #1&url=https://lagmanzaza.github.io//event-loop-1/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://lagmanzaza.github.io//event-loop-1/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=https://lagmanzaza.github.io//event-loop-1/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+    </article>
+
+</main>
+
+
+    <footer class="site-footer">
+        <!-- <a class="subscribe icon-feed" href="https://lagmanzaza.github.io//rss/"><span class="tooltip">Subscribe!</span></a> -->
+        <div class="inner">
+             <section class="copyright">All content copyright <a href="/">lagmanzaza</a> &copy; 2019 &bull; All rights reserved.</section>
+             <section class="poweredby">Proudly published with <a class="icon-ghost" href="http://ghost.org"><span class="icon-ghost-text">Ghost</span></a> in <a href="https://github.com/mityalebedev/The-Shell">The Shell</a> theme.</section>
+        </div>
+    </footer>
+
+    
+
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>Pipe function ใน Javascript</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/normalize.css?v=f8f4687691" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/screen.css?v=f8f4687691" />
+
+    <meta name="description" content="ท่านใดเคยประสบปัญหาเรื่องการใช้ transformation function เยอะๆรึเปล่า ผมมีทางแก้มาทำเสนอ" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="canonical" href="https://lagmanzaza.github.io//pipe-function-ain-javascript/" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <link rel="amphtml" href="https://lagmanzaza.github.io//pipe-function-ain-javascript/amp/" />
+    
+    <meta property="og:site_name" content="lagmanzaza" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Pipe function ใน Javascript" />
+    <meta property="og:description" content="ท่านใดเคยประสบปัญหาเรื่องการใช้ transformation function เยอะๆรึเปล่า ผมมีทางแก้มาทำเสนอ" />
+    <meta property="og:url" content="https://lagmanzaza.github.io//pipe-function-ain-javascript/" />
+    <meta property="og:image" content="https://lagmanzaza.github.io//content/images/2019/10/fp0HTAi.jpg" />
+    <meta property="article:published_time" content="2019-02-10T09:50:00.000Z" />
+    <meta property="article:modified_time" content="2019-10-20T09:51:29.000Z" />
+    <meta property="article:publisher" content="https://www.facebook.com/ghost" />
+    <meta property="article:author" content="https://www.facebook.com/lagman2600th" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Pipe function ใน Javascript" />
+    <meta name="twitter:description" content="ท่านใดเคยประสบปัญหาเรื่องการใช้ transformation function เยอะๆรึเปล่า ผมมีทางแก้มาทำเสนอ" />
+    <meta name="twitter:url" content="https://lagmanzaza.github.io//pipe-function-ain-javascript/" />
+    <meta name="twitter:image" content="https://lagmanzaza.github.io//content/images/2019/10/fp0HTAi.jpg" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="tar jarupong" />
+    <meta name="twitter:site" content="@tryghost" />
+    <meta property="og:image:width" content="1080" />
+    <meta property="og:image:height" content="365" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "lagmanzaza",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://lagmanzaza.github.io//favicon.ico",
+            "width": 48,
+            "height": 48
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "tar jarupong",
+        "image": {
+            "@type": "ImageObject",
+            "url": "https://lagmanzaza.github.io//content/images/2019/10/36398960_2017406161906508_6784979761291591680_o.jpg",
+            "width": 1440,
+            "height": 1432
+        },
+        "url": "https://lagmanzaza.github.io//author/tar/",
+        "sameAs": [
+            "https://www.facebook.com/lagman2600th"
+        ]
+    },
+    "headline": "Pipe function ใน Javascript",
+    "url": "https://lagmanzaza.github.io//pipe-function-ain-javascript/",
+    "datePublished": "2019-02-10T09:50:00.000Z",
+    "dateModified": "2019-10-20T09:51:29.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://lagmanzaza.github.io//content/images/2019/10/fp0HTAi.jpg",
+        "width": 1080,
+        "height": 365
+    },
+    "description": "สำหรับใครที่เคยใช้เจ้าแพะหรือ ramdaJS มาก่อนคงได้ยินหรือเคยใช้ pipe() มาอยู่แล้ว\nซึ่งพี่ pipe() เอาไว้ทำอะไรน่ะเหรอ ดูตัวอย่างเลยครับ\n\ngetFirstChar( toLowerCase(data))\n\n\n\nทุกเห็นคงคิดว่าก็ไม่เห็นมีไรเลยซับซ้อนตรงไหนแค่ 2 functions เอง\nแต่ถ้าสมมุติเป็นแบบนี้ล่ะ\n\ngetFirstChar( toLowerCase(convertAsciiToText(getName(data))))\n\n\nเฮ๊~~~~~~ ทุกคนกำลังคิดแบบนี้อยู่แน่ๆ\n\nก่อนที่เราจะมาพูดถึงวิธีการแก้ไขปัญหา เรามาพูดถึงแนวคิดของเจ้า pipe กันก่อน\nต้องย้อนกลับไปความรู้ทางคณิตศาสตร์ตอน ม. 5 การเลยคือเรื่อง ",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://lagmanzaza.github.io//"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.2" />
+    <link rel="alternate" type="application/rss+xml" title="lagmanzaza" href="https://lagmanzaza.github.io//rss/" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-85390183-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-85390183-1');
+</script>
+</head>
+<body class="post-template">
+
+    
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <a id="blog-logo" href="https://lagmanzaza.github.io/">
+                    lagmanzaza
+            </a>
+            <div class="inner">
+                <nav class="site-nav">
+    <div class="site-nav-left">
+    </div>
+</nav>
+            </div>
+        </header>
+
+
+        <span class="post-meta"><time datetime="2019-02-10">10 Feb 2019</time> </span>
+
+        <h1 class="post-title">Pipe function ใน Javascript</h1>
+
+        <section class="post-content">
+            <p>สำหรับใครที่เคยใช้เจ้าแพะหรือ ramdaJS มาก่อนคงได้ยินหรือเคยใช้ pipe() มาอยู่แล้ว ซึ่งพี่ pipe() เอาไว้ทำอะไรน่ะเหรอ ดูตัวอย่างเลยครับ</p><pre><code>getFirstChar( toLowerCase(data))
+
+</code></pre><p>ทุกเห็นคงคิดว่าก็ไม่เห็นมีไรเลยซับซ้อนตรงไหนแค่ 2 functions เอง แต่ถ้าสมมุติเป็นแบบนี้ล่ะ</p><pre><code>getFirstChar( toLowerCase(convertAsciiToText(getName(data))))
+</code></pre><figure class="kg-card kg-image-card"><img src="https://firebasestorage.googleapis.com/v0/b/myblog-7f48d.appspot.com/o/flamelink%2Fmedia%2F1545679658057_1545660065385_holy-shit-what-dc0kau.jpg?alt=media&amp;token=494d24a5-5bba-42fc-a2c0-6fa7b851a73f" class="kg-image"></figure><p>เฮ๊~~~~~~ ทุกคนกำลังคิดแบบนี้อยู่แน่ๆ</p><p>ก่อนที่เราจะมาพูดถึงวิธีการแก้ไขปัญหา เรามาพูดถึงแนวคิดของเจ้า pipe กันก่อน ต้องย้อนกลับไปความรู้ทางคณิตศาสตร์ตอน ม. 5 การเลยคือเรื่อง relation and function ต้องขอบอกก่อนว่าผมก็ไม่เก่งคณิตศาสตร์แต่ผมจะพยายามอธิบายให้ง่ายที่สุดเท่าที่จะทำได้นะครับ</p><p><strong>Math #1 basic function</strong></p><p>สมมุติว่าผมสร้าง function ตัวนึงสำหรับรับค่า x เพื่อนำไปบวก 2</p><pre><code>f(x) = x + 2
+</code></pre><p>ทีนี้ผมสร้างอีก function นึงสำหรับรับค่า x แล้วทำไปคูณ 5</p><pre><code>g(x) = x * 5
+</code></pre><p>เริ่มจาก function แรกก่อน</p><pre><code>f(2) = 2 + 2
+     = 4
+</code></pre><p>ต่อมาตัวก็เป็น function g</p><pre><code>g(2) = 2 * 5 
+     = 10
+</code></pre><p>นี้ก็เป็นตัวอย่างเล็กๆน้อยจากเรื่อง function สำหรับ ม. 5 ต่อไปมาเริ่มในสิ่งที่ยากขึ้นอีกระดับนึงเรียกว่า composite function เริ่ม!!</p><p><strong>Math #2 Composite function</strong></p><p>ง่ายๆมันคือการรวม function เข้าด้วยกันนั้นเอง ผมขอยก 2 functions ด้านบนมาด้วยนะครับจะได้ไม่เสียเวลา มันก็จะได้แบบนี้</p><p>อันดับแรกผมเอา 2 function2 นี้รวมกัน</p><pre><code>f(g(x))
+</code></pre><p>ผมจะเขียนแนวการคิดไปทีละขั้นตอนเน้อ...</p><pre><code>f(g(x)) = f(x * 5)  
+        = (x * 5) + 2
+</code></pre><p>ลองมาดูตัวอย่างกัน</p><pre><code>f(g(2)) = f(2 * 5)  
+        = (2 * 5) + 2  
+        = 10 + 2  
+        = 12
+</code></pre><p>เอ๊ะแล้วเจ้า pipe() สุดที่รักของเรามันเกี่ยวอะไรกับคณิตศาสตร์ชวนปวดหัว ผมต้องบอกเลยว่ามันคืออันเดียวกัน ผมจะเปรียบเทียบให้ดู</p><pre><code>f(g(x)) = getFirstChar( toLowerCase(data))
+</code></pre><p>เห็นมั๊ยว่าเหมือนกันเป๊ะๆ เรามาดูโค๊ด pipe() กันเลย</p><pre><code>const pipe = (...fns) =&gt; x =&gt; fns.reduce((v, f) =&gt; f(v), x)
+</code></pre><p>สำหรับใครที่ไม่รู้จัก <a href="https://medium.freecodecamp.org/how-do-javascript-rest-parameters-actually-work-227726e16cc8"><strong>rest parameter</strong></a> กับ <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce"><strong>reduce</strong></a>ตามนี้โล๊ด</p><p>วิธีการใช้ตัว pipe() ก็ตามนี้เลย</p><p>pipe(getFirstChar, toLowerCase, convertAsciiToText, getName)(data)</p><p>เห็นมั๊ยว่าสะดวกและอ่านงานกว่าเยอะ ถือว่าเป็นวิธีที่ดีมากๆ</p><p>เป็นไงบ้างครับ สำหรับอะไรแบบนี้</p><p>Ref:</p><p><a href="https://medium.com/front-end-weekly/pipe-and-compose-in-javascript-5b04004ac937">https://medium.com/front-end-weekly/pipe-and-compose-in-javascript-5b04004ac937</a></p><p><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters</a></p>
+        </section>
+
+        <footer class="post-footer">
+
+                <section class="author">
+                    <h4>tar jarupong</h4>
+                    <p></p>
+                </section>
+
+            <section class="share">
+                <h4>Share this</h4>
+                <a class="icon-twitter" href="http://twitter.com/share?text=Pipe function ใน Javascript&url=https://lagmanzaza.github.io//pipe-function-ain-javascript/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://lagmanzaza.github.io//pipe-function-ain-javascript/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=https://lagmanzaza.github.io//pipe-function-ain-javascript/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+    </article>
+
+</main>
+
+
+    <footer class="site-footer">
+        <!-- <a class="subscribe icon-feed" href="https://lagmanzaza.github.io//rss/"><span class="tooltip">Subscribe!</span></a> -->
+        <div class="inner">
+             <section class="copyright">All content copyright <a href="/">lagmanzaza</a> &copy; 2019 &bull; All rights reserved.</section>
+             <section class="poweredby">Proudly published with <a class="icon-ghost" href="http://ghost.org"><span class="icon-ghost-text">Ghost</span></a> in <a href="https://github.com/mityalebedev/The-Shell">The Shell</a> theme.</section>
+        </div>
+    </footer>
+
+    
+
+</body>
+</html>

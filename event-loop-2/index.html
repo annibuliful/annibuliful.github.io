@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>Event-loop แบบพื้นฐานมากกกกก #2</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/normalize.css?v=f8f4687691" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/screen.css?v=f8f4687691" />
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="canonical" href="https://lagmanzaza.github.io//event-loop-2/" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <link rel="amphtml" href="https://lagmanzaza.github.io//event-loop-2/amp/" />
+    
+    <meta property="og:site_name" content="lagmanzaza" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Event-loop แบบพื้นฐานมากกกกก #2" />
+    <meta property="og:description" content="หลังจากที่ผมอธิบาย concept แบบคร่าวๆไปในครั้งที่แล้ว วันนี้เราจะลงลึกไประดับนึงครับ มาเริ่มกันเลยดีกว่า แต่ก่อนอื่นเลยที่เราจะมาทำความเข้าใจเรื่อง Event-loop มาคุยเรื่อง Reactor pattern กันก่อนนะครับ   Reactor Patternมันคืออะไรกันนะ มันก็คือ pattern ตั" />
+    <meta property="og:url" content="https://lagmanzaza.github.io//event-loop-2/" />
+    <meta property="og:image" content="https://lagmanzaza.github.io//content/images/2019/10/WlaBgFV.png" />
+    <meta property="article:published_time" content="2019-10-20T08:05:58.000Z" />
+    <meta property="article:modified_time" content="2019-10-20T08:07:16.000Z" />
+    <meta property="article:tag" content="NodeJS" />
+    
+    <meta property="article:publisher" content="https://www.facebook.com/ghost" />
+    <meta property="article:author" content="https://www.facebook.com/lagman2600th" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Event-loop แบบพื้นฐานมากกกกก #2" />
+    <meta name="twitter:description" content="หลังจากที่ผมอธิบาย concept แบบคร่าวๆไปในครั้งที่แล้ว วันนี้เราจะลงลึกไประดับนึงครับ มาเริ่มกันเลยดีกว่า แต่ก่อนอื่นเลยที่เราจะมาทำความเข้าใจเรื่อง Event-loop มาคุยเรื่อง Reactor pattern กันก่อนนะครับ   Reactor Patternมันคืออะไรกันนะ มันก็คือ pattern ตั" />
+    <meta name="twitter:url" content="https://lagmanzaza.github.io//event-loop-2/" />
+    <meta name="twitter:image" content="https://lagmanzaza.github.io//content/images/2019/10/WlaBgFV.png" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="tar jarupong" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="NodeJS" />
+    <meta name="twitter:site" content="@tryghost" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1250" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "lagmanzaza",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://lagmanzaza.github.io//favicon.ico",
+            "width": 48,
+            "height": 48
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "tar jarupong",
+        "image": {
+            "@type": "ImageObject",
+            "url": "https://lagmanzaza.github.io//content/images/2019/10/36398960_2017406161906508_6784979761291591680_o.jpg",
+            "width": 1440,
+            "height": 1432
+        },
+        "url": "https://lagmanzaza.github.io//author/tar/",
+        "sameAs": [
+            "https://www.facebook.com/lagman2600th"
+        ]
+    },
+    "headline": "Event-loop แบบพื้นฐานมากกกกก #2",
+    "url": "https://lagmanzaza.github.io//event-loop-2/",
+    "datePublished": "2019-10-20T08:05:58.000Z",
+    "dateModified": "2019-10-20T08:07:16.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://lagmanzaza.github.io//content/images/2019/10/WlaBgFV.png",
+        "width": 2000,
+        "height": 1250
+    },
+    "keywords": "NodeJS",
+    "description": "หลังจากที่ผมอธิบาย concept แบบคร่าวๆไปในครั้งที่แล้ว\nวันนี้เราจะลงลึกไประดับนึงครับ มาเริ่มกันเลยดีกว่า\nแต่ก่อนอื่นเลยที่เราจะมาทำความเข้าใจเรื่อง Event-loop มาคุยเรื่อง Reactor\npattern กันก่อนนะครับ\n\n\n\n\nReactor Pattern\nมันคืออะไรกันนะ มันก็คือ pattern ตัวนึงที่เข้าใจจัดการ event-driven architecture\nโดยตัวมันเนี๊ยจะทำการ พูดง่ายๆก็คือ Reactor Pattern ทำหน้าที่จัดการ process\nที่ใช้เวลานานๆไปเป็น asynchronouse ครับ แล้วส่งกลับมาเป็น callback\nอย่างที่เรารู้จักกันนี้เอง\n\nโดยโครงสร้างของมันจะประกอบด้",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://lagmanzaza.github.io//"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.2" />
+    <link rel="alternate" type="application/rss+xml" title="lagmanzaza" href="https://lagmanzaza.github.io//rss/" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-85390183-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-85390183-1');
+</script>
+</head>
+<body class="post-template tag-nodejs">
+
+    
+
+<main class="content" role="main">
+
+    <article class="post tag-nodejs">
+
+        <header class="post-header">
+            <a id="blog-logo" href="https://lagmanzaza.github.io/">
+                    lagmanzaza
+            </a>
+            <div class="inner">
+                <nav class="site-nav">
+    <div class="site-nav-left">
+    </div>
+</nav>
+            </div>
+        </header>
+
+
+        <span class="post-meta"><time datetime="2019-10-20">20 Oct 2019</time> on <a href="/tag/nodejs/">NodeJS</a></span>
+
+        <h1 class="post-title">Event-loop แบบพื้นฐานมากกกกก #2</h1>
+
+        <section class="post-content">
+            <p>หลังจากที่ผมอธิบาย concept แบบคร่าวๆไปในครั้งที่แล้ว วันนี้เราจะลงลึกไประดับนึงครับ มาเริ่มกันเลยดีกว่า แต่ก่อนอื่นเลยที่เราจะมาทำความเข้าใจเรื่อง Event-loop มาคุยเรื่อง Reactor pattern กันก่อนนะครับ</p><p><br></p><h4 id="reactor-pattern">Reactor Pattern</h4><p>มันคืออะไรกันนะ มันก็คือ pattern ตัวนึงที่เข้าใจจัดการ event-driven architecture โดยตัวมันเนี๊ยจะทำการ พูดง่ายๆก็คือ Reactor Pattern ทำหน้าที่จัดการ process ที่ใช้เวลานานๆไปเป็น asynchronouse ครับ แล้วส่งกลับมาเป็น callback อย่างที่เรารู้จักกันนี้เอง</p><p>โดยโครงสร้างของมันจะประกอบด้วย 4 ตัวหลักตามนี้ครับ</p><ol><li>Resouce =&gt; ก็ตามชื่อเลยครับมันคือ resource for input &amp; output</li><li>Synchronous Event Demultiplexer =&gt; มันกับตัวแจ้งเตือนว่าทำงานเกี่ยวกับ I/O เสร็จแล้วส่งต่อไปที่ Event queue</li><li>Event Queue =&gt; คือช่องที่เก็บ process ที่ต่อคิวกันรอกันอยู่</li><li>Dispatcher =&gt; คือเอาต้า process จาก Event queue มาทำงานแล้วส่งกลับไป</li></ol><p>เรียบร้อยแล้วครับสำหรับพื้นฐาน ของ Reactor Pattern เรามาเข้าเรื่อง Event-loop แบบจริงจังกันครับ มาลุยกัน~~~</p><p><br></p><h4 id="event-loop">Event-loop</h4><p>ในที่สุดก็เข้าเรื่องพี่ loop สักที ผมขอเริ่มต้นที่รูปภาพแรกก็เลยครับ</p><figure class="kg-card kg-image-card"><img src="https://i.imgur.com/GSBai6R.png" class="kg-image" alt="GSBai6R.png"></figure><p>จะเห็นว่ามี 6 ขั้นตอนหลักๆ ผมจะเริ่มอธิบายเลยนะครับ เย้~</p><ol><li>Application =&gt; จะทำการสร้าง request หรือ process เพื่อส่งต่อไปให้ Event Demultiplexer การทำงานในส่วนนี้เป็นแบบ Non-Blocking เพื่อทำงานส่งต่อไปที่ Event Demultiplexer</li><li>Event Demultiplxer =&gt; เป็นจุดที่ทำงาน เกี่ยวกับ I/O ล้วนๆ เช่น อ่านไฟล์ เขียนไฟล์ เป็นต้น แล้วส่งต่อไปที่ Event queue</li><li>Event queue =&gt; เป็นตัวเก็บ process ที่จะเรียกไปใช้งานผ่านเจ้า Even loop</li><li>Event loop =&gt; จะคอยเช็คไปเรื่อยๆว่ามี process ค้างอยู่ใน Event queue รึเปล่าแล้ว ถ้ามีก็เอามาทำงานให้มันเสร็จจะได้ส่งกลับไป</li><li>Handler =&gt; หลังจากที่ process นั้นๆทำงานเสร็จแล้วก็ส่งกลับมาว่า ฉันทำเสร็จแล้วน๊าาาา ไปทำ queue ต่อไปได้เลยเน้อ ในกรณีที่มี request ใหม่เข้ามาจะถูกถึงไปยัง ข้อ 1 แล้วทำตามขั้นตอนต่อไป</li><li>Event loop ก็จะวนกลับไปทำงานในข้อหนึ่งใหม่ แล้วก็ทำอย่างนี้ไปเรื่อยๆ</li></ol><p>ในที่สุดผมก็เล่าเรื่อง Event loop เสร็จสักที แต่เดี๋ยวก่อนครับ การทำแบบนั้นมันคือแบบ Non-Blocking I/O แล้วถ้าเป็น Blocking I/O ล่ะจะทำยังไงดี มันก็จะเป็นสิ่งที่ผมพูดต่อจากนี้ครับ อย่าพึ่งเบื่อกันไปก่อนนะครับ จะจบแล้ว มาเริ่มเรื่องสุดท้ายของบทความนี้กัน</p><p><strong>Thread pool</strong></p><p>เรามาพูดต่อให้ละเอียดขึ้นดีกว่าครับด้วยภาพนี้เลยครับ</p><figure class="kg-card kg-image-card"><img src="https://i.imgur.com/WlaBgFV.png" class="kg-image" alt="WlaBgFV.png"></figure><p>หลังจากที่ทุกคนเข้าใจการทำงานของ event loop แล้วมาพูดถึงเรื่อง thread pool กันครับ มาเข้าสู่เนื้อหาอันชวนปวดหัวกัน</p><p>ที่จริงแล้วพี่ thread pool มีชื่อเรียกอีกชื่อคือ libuv ครับผมขอยังไม่พูดถึง libuv ก็แล้วกันนะครับเพราะเรื่องมันเยอะมากกกก(ที่จริงขี้เกียจอ่าน) โดยพี่ thread pool ของเราเอาไว้รับมือกับการทำงานที่เป็น blocking I/O ครับ โดยการทำงานของมันก็ง่ายแสนง่าย ก็คือมันจะทำการเช็คแต่ละ request มาเป็น Blocking I/O รึเปล่าถ้าเป็นก็ให้ส่ง request นั้นไปทำงานโดยมี thread pool เป็นตัวจัดการแทน event loop แต่เอ๊ะทำไมเรายังต้องใช้ thread pool อยู่แค่ event loop ก็น่าจะจัดการได้แล้วนี้น๊า แต่...มันผิดเลยครับเพราะตัว event loop จะ process อะไรที่ทำงานแป๊บเดียวก็เสร็จไม่เสียนานมากๆ แต่ถ้ามี request ที่ต้องใช้เวลานานมากๆล่ะอย่างเช่น การทำงานกับ file system หรือติดต่อ database ที่ใช้เวลานานๆ ตัว event loop เริ่มจะเป็นคอขวดแล้วใช่มั๊ยล่ะครับ นี้ถึงเป็นเหตุผลทำไมถึงมี thread pool และทำไม database driver ที่เราชอบใช้กันมันถึงเป็น callback,promise ครับ</p><p>เข้าเรื่อง thread pool ที่แท้ true กันครับ เริ่ม~~~ การทำงานของมันก็ตามรูปที่ผมวาดไว้เลยครับโดนการทำงานก็คือเช็ค request ว่าเป็น Blocking I/O รึเปล่าถ้าเป็นก็ไปเช็คว่าข้างในมี thread pool เหลือให้ใช้รึเปล่าโดยปรกติแล้วจะมีแค่ 4 ตัวเท่านั้นแต่เราสามารถเพิ่มได้โดยใช้คำสั่ง <strong><em>UV_THREADPOOL_SIZE=5</em></strong> ได้เลยครับ หรือจะใช้ <strong><em>process.env.UV_THREADPOOL_SIZE = 10</em></strong> ก็ได้ครับ จะได้เพิ่มช่องสำหรับจัดการกับ Blocking I/O ที่จะเกิดขึ้นครับ</p><h4 id="-">เสริม</h4><p>พยายามหลีกเลี่ยงการใช้งาน function ที่เป็นแบบ Blocking I/O ให้ได้ครับเพราะว่าจะไปทำงานอยู่บน thread pool มากเกินไปอย่างเช่น</p><p><code>fs.fsyncSync(fd)</code><br><br><br><code>fs.lchmodSync(path, mode)</code></p><p>ก็จบกันแล้วนะครับสำหรับ Event loop ตอนสุดท้ายแบบพื้นฐานมากๆนะครับ</p><p>ผมเกือบลืมเลย ปุกาศๆ  ถ้าเราอีกสักหน่อยไม่น่าจะเกิน 10 ปีนี้ เดี๋ยวๆไม่ใช่สิ ไม่เกิน 2 เดือนข้างหน้าพวกเราอยากจะทำคลิปสอน NodeJS แบบฟรีๆ ไม่กั๊กอะไรทั้งนั้นแต่ถ้าใครบริจาคก็ได้ครับ แต่ที่สำคัญคือฟรี!!!!</p><p>Ref:</p><p><a href="https://en.wikipedia.org/wiki/Reactor_pattern">Reactor pattern</a></p><p><a href="https://www.journaldev.com/7462/node-js-architecture-single-threaded-event-loop">Single Threaded Event Loop</a></p><p><a href="https://nodejs.org/en/docs/guides/blocking-vs-non-blocking/">Blocking vs Non-Blocking</a></p><p><a href="https://www.future-processing.pl/blog/on-problems-with-threads-in-node-js/">On problems with threads in node.js</a></p>
+        </section>
+
+        <footer class="post-footer">
+
+                <section class="author">
+                    <h4>tar jarupong</h4>
+                    <p></p>
+                </section>
+
+            <section class="share">
+                <h4>Share this</h4>
+                <a class="icon-twitter" href="http://twitter.com/share?text=Event-loop แบบพื้นฐานมากกกกก #2&url=https://lagmanzaza.github.io//event-loop-2/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://lagmanzaza.github.io//event-loop-2/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=https://lagmanzaza.github.io//event-loop-2/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+    </article>
+
+</main>
+
+
+    <footer class="site-footer">
+        <!-- <a class="subscribe icon-feed" href="https://lagmanzaza.github.io//rss/"><span class="tooltip">Subscribe!</span></a> -->
+        <div class="inner">
+             <section class="copyright">All content copyright <a href="/">lagmanzaza</a> &copy; 2019 &bull; All rights reserved.</section>
+             <section class="poweredby">Proudly published with <a class="icon-ghost" href="http://ghost.org"><span class="icon-ghost-text">Ghost</span></a> in <a href="https://github.com/mityalebedev/The-Shell">The Shell</a> theme.</section>
+        </div>
+    </footer>
+
+    
+
+</body>
+</html>

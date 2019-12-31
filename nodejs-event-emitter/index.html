@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>NodeJS Event Emitter</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/normalize.css?v=f8f4687691" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/screen.css?v=f8f4687691" />
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="canonical" href="https://lagmanzaza.github.io//nodejs-event-emitter/" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <link rel="amphtml" href="https://lagmanzaza.github.io//nodejs-event-emitter/amp/" />
+    
+    <meta property="og:site_name" content="lagmanzaza" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="NodeJS Event Emitter" />
+    <meta property="og:description" content="วันนี้เราจะได้รู้กันว่าตัว NodeJS คืออะไร ดียังไง เริ่มได้~~~ Node Event ?ด้วยความที่ว่า NodeJS เองทำงานเป็นแบบ event-driven architecture หรือเรียกแบบไทยๆว่าการขับเคลื่อนทุกอย่างด้วย Event มาถึงตรงนี้ทุกคนคงจะงงว่าแล้วตัว event-driven คืออะไร รูปนี้ทุ" />
+    <meta property="og:url" content="https://lagmanzaza.github.io//nodejs-event-emitter/" />
+    <meta property="og:image" content="https://lagmanzaza.github.io//content/images/2019/10/7oG5ce7.png" />
+    <meta property="article:published_time" content="2019-10-20T09:54:53.000Z" />
+    <meta property="article:modified_time" content="2019-10-20T09:54:53.000Z" />
+    <meta property="article:publisher" content="https://www.facebook.com/ghost" />
+    <meta property="article:author" content="https://www.facebook.com/lagman2600th" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="NodeJS Event Emitter" />
+    <meta name="twitter:description" content="วันนี้เราจะได้รู้กันว่าตัว NodeJS คืออะไร ดียังไง เริ่มได้~~~ Node Event ?ด้วยความที่ว่า NodeJS เองทำงานเป็นแบบ event-driven architecture หรือเรียกแบบไทยๆว่าการขับเคลื่อนทุกอย่างด้วย Event มาถึงตรงนี้ทุกคนคงจะงงว่าแล้วตัว event-driven คืออะไร รูปนี้ทุ" />
+    <meta name="twitter:url" content="https://lagmanzaza.github.io//nodejs-event-emitter/" />
+    <meta name="twitter:image" content="https://lagmanzaza.github.io//content/images/2019/10/7oG5ce7.png" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="tar jarupong" />
+    <meta name="twitter:site" content="@tryghost" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1188" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "lagmanzaza",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://lagmanzaza.github.io//favicon.ico",
+            "width": 48,
+            "height": 48
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "tar jarupong",
+        "image": {
+            "@type": "ImageObject",
+            "url": "https://lagmanzaza.github.io//content/images/2019/10/36398960_2017406161906508_6784979761291591680_o.jpg",
+            "width": 1440,
+            "height": 1432
+        },
+        "url": "https://lagmanzaza.github.io//author/tar/",
+        "sameAs": [
+            "https://www.facebook.com/lagman2600th"
+        ]
+    },
+    "headline": "NodeJS Event Emitter",
+    "url": "https://lagmanzaza.github.io//nodejs-event-emitter/",
+    "datePublished": "2019-10-20T09:54:53.000Z",
+    "dateModified": "2019-10-20T09:54:53.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://lagmanzaza.github.io//content/images/2019/10/7oG5ce7.png",
+        "width": 2000,
+        "height": 1188
+    },
+    "description": "วันนี้เราจะได้รู้กันว่าตัว NodeJS คืออะไร ดียังไง เริ่มได้~~~\n\nNode Event ?\nด้วยความที่ว่า NodeJS เองทำงานเป็นแบบ event-driven architecture\nหรือเรียกแบบไทยๆว่าการขับเคลื่อนทุกอย่างด้วย Event\nมาถึงตรงนี้ทุกคนคงจะงงว่าแล้วตัว event-driven คืออะไร\n\nรูปนี้ทุกคนคงเข้าใจ event driven ทุกคนจะเห็นว่ามันคือ Observer design pattern\nนั้นเองนะครับซึ่งตัว Observer pattern เองเป็นฐานในการทำ event driven\nผมขอไม่ลงลึกเรื่อง Observer pattern ง่ายๆก็คือ Observer pattern\nเอาไว้สำหรับสังเกตุการเปลี่ยนแปลงข้อมูลว่าเ",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://lagmanzaza.github.io//"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.2" />
+    <link rel="alternate" type="application/rss+xml" title="lagmanzaza" href="https://lagmanzaza.github.io//rss/" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-85390183-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-85390183-1');
+</script>
+</head>
+<body class="post-template">
+
+    
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <a id="blog-logo" href="https://lagmanzaza.github.io/">
+                    lagmanzaza
+            </a>
+            <div class="inner">
+                <nav class="site-nav">
+    <div class="site-nav-left">
+    </div>
+</nav>
+            </div>
+        </header>
+
+
+        <span class="post-meta"><time datetime="2019-10-20">20 Oct 2019</time> </span>
+
+        <h1 class="post-title">NodeJS Event Emitter</h1>
+
+        <section class="post-content">
+            <p>วันนี้เราจะได้รู้กันว่าตัว NodeJS คืออะไร ดียังไง เริ่มได้~~~</p><h4 id="node-event">Node Event ?</h4><p>ด้วยความที่ว่า NodeJS เองทำงานเป็นแบบ event-driven architecture หรือเรียกแบบไทยๆว่าการขับเคลื่อนทุกอย่างด้วย Event มาถึงตรงนี้ทุกคนคงจะงงว่าแล้วตัว event-driven คืออะไร</p><figure class="kg-card kg-image-card"><img src="https://i.imgur.com/yZjiHQy.jpg" class="kg-image"></figure><p>รูปนี้ทุกคนคงเข้าใจ event driven ทุกคนจะเห็นว่ามันคือ Observer design pattern นั้นเองนะครับซึ่งตัว Observer pattern เองเป็นฐานในการทำ event driven ผมขอไม่ลงลึกเรื่อง Observer pattern ง่ายๆก็คือ Observer pattern เอาไว้สำหรับสังเกตุการเปลี่ยนแปลงข้อมูลว่าเปลี่ยนแปลงไปยังไงบ้างนั้นเองครับ </p><h4 id="node-event-">Node Event ใช้งานยังไง ?</h4><p>มาเริ่มใช้ Event emitter กันเลยครับผมขอวาดภาพว่าเราจะทำ service อะไรด้วย Event Emitter นะครับ</p><figure class="kg-card kg-image-card"><img src="https://i.imgur.com/OECu3Yh.png" class="kg-image" alt="OECu3Yh.png"></figure><p>ผมจะลองเขียนตามนี้นะครับ เริ่ม~~~<br><br><strong>#1 ทำการสร้าง require และสร้าง event ตัวนึง</strong></p><pre><code>  const EventEmitter = require('events');
+  const myService = new EventEmitter();
+</code></pre><p><br><strong>#2 สร้างตัว emit data</strong></p><pre><code>  myService.emit('registration',{
+    name: "Tar",
+    email: "Tar@email.com"
+  })
+
+</code></pre><p>ต้องอธิบายก่อนว่าตัว registration คือชื่อ event ครับส่วนตัว object คือข้อมูลที่เราจะส่งผ่านตัว regitration event</p><p><br><strong>#3 สร้างตัว listener สำหรับ email &amp; admin</strong></p><pre><code>  // ใครยังไม่เคยใช้ =&gt; หรือ arrow function ผมมี ref ไว้ข้างล่างครับ
+  // email service
+  myService.on('registration', (userData) =&gt; {
+    console.log(`ส่ง email ไปหาคุณ ${userData.name} ไปที่ ${userData.email}`)
+  })
+  
+  // admin service
+  myService.on('registration', (userData)=&gt;{
+    console.log(`เจ้านายครับมีลูกค้าสมัครสมาชิก คุณ ${userData.name}$`)
+  })
+
+</code></pre><p><br><strong>#4 โค๊ดเต็มๆตามนี้เลยครับ</strong></p><pre><code>  const EventEmitter = require('events');
+  const myService = new EventEmitter();
+  
+  myService.emit('registration',{
+    name: "Tar",
+    email: "Tar@email.com"
+  })
+  
+  myService.on('registration', (userData) =&gt; {
+    console.log(`ส่ง email ไปหาคุณ ${userData.name} ไปที่ ${userData.email}`)
+  })
+  
+
+  myService.on('registration', (userData)=&gt;{
+    console.log(`เจ้านายครับมีลูกค้าสมัครสมาชิก คุณ ${userData.name}$`)
+  })
+
+</code></pre><figure class="kg-card kg-image-card"><img src="https://lagmanzaza.github.io//content/images/2019/10/i7sXG6v.png" class="kg-image"></figure><p><br>ก็จบกันไปแล้วนะครับสำหรับ NodeJS Event Emitter แบบพื้นฐานมาก!!!! ผมก็หวังว่าผู้อ่านจะเข้าใจการทำงานและการเขียน Event Emitter นะครับผม วันนี้ผมต้าขอตัวลาไปก่อนชะแว๊บ~~~</p><p>Ref:</p><p><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions">Arrow functions</a></p><p><a href="https://en.wikipedia.org/wiki/Event-driven_architecture">Event-driven architecture</a></p><p><a href="https://en.wikipedia.org/wiki/Observer_pattern">Observer pattern</a></p><p><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals">Template literals</a></p>
+        </section>
+
+        <footer class="post-footer">
+
+                <section class="author">
+                    <h4>tar jarupong</h4>
+                    <p></p>
+                </section>
+
+            <section class="share">
+                <h4>Share this</h4>
+                <a class="icon-twitter" href="http://twitter.com/share?text=NodeJS Event Emitter&url=https://lagmanzaza.github.io//nodejs-event-emitter/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://lagmanzaza.github.io//nodejs-event-emitter/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=https://lagmanzaza.github.io//nodejs-event-emitter/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+    </article>
+
+</main>
+
+
+    <footer class="site-footer">
+        <!-- <a class="subscribe icon-feed" href="https://lagmanzaza.github.io//rss/"><span class="tooltip">Subscribe!</span></a> -->
+        <div class="inner">
+             <section class="copyright">All content copyright <a href="/">lagmanzaza</a> &copy; 2019 &bull; All rights reserved.</section>
+             <section class="poweredby">Proudly published with <a class="icon-ghost" href="http://ghost.org"><span class="icon-ghost-text">Ghost</span></a> in <a href="https://github.com/mityalebedev/The-Shell">The Shell</a> theme.</section>
+        </div>
+    </footer>
+
+    
+
+</body>
+</html>
